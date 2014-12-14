@@ -2,15 +2,13 @@ package com.gtoteck.app.haychongiadung;
 
 import java.io.InputStream;
 
-import com.gtoteck.app.dao.GiaDungDAO;
-import com.gtoteck.app.dao.GiaDungEntity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,6 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.gtoteck.app.dao.GiaDungDAO;
+import com.gtoteck.app.dao.GiaDungEntity;
+import com.gtoteck.app.util.Define;
 
 public class MainActivity extends Activity {
 
@@ -31,6 +33,7 @@ public class MainActivity extends Activity {
 	private ImageView mImgRight;
 	private TextView mTvLeft;
 	private TextView mTvRight;
+	private TextView mTvQuestionIdx;
 	private Button mBtnSkip;
 
 	private GiaDungDAO mGiaDungDAO;
@@ -38,9 +41,13 @@ public class MainActivity extends Activity {
 
 	private int mIndex = 0;
 	private int mSize = 0;
-	private int mRuby = 0;
+	private int mRuby = 70;
+
+	private int mSec = Define.MAX_SEC;
 
 	private GiaDungEntity mGiaDungEntity;
+
+	private Handler mHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +67,15 @@ public class MainActivity extends Activity {
 		mImgRight = (ImageView) findViewById(R.id.imgRight);
 		mTvLeft = (TextView) findViewById(R.id.tvLeft);
 		mTvRight = (TextView) findViewById(R.id.tvRight);
+		mTvQuestionIdx = (TextView) findViewById(R.id.tvQuestionIdx);
 		mBtnSkip = (Button) findViewById(R.id.btnSkip);
 		mBtnSkip.setOnClickListener(mBtnSkipOnClickListener);
 
 		mGiaDungDAO = new GiaDungDAO(mContext);
 		mSize = mGiaDungDAO.getSize();
+
+		mLlRight.setOnClickListener(mLlOnClickListener);
+		mLlLeft.setOnClickListener(mLlOnClickListener);
 
 		next();
 	}
@@ -78,23 +89,121 @@ public class MainActivity extends Activity {
 		}
 	};
 
+	private OnClickListener mLlOnClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			int id = v.getId();
+
+			if (id == R.id.llLeft) {
+				check(mGiaDungEntity.getPriceleft(),
+						mGiaDungEntity.getPriceright());
+			} else {
+				check(mGiaDungEntity.getPriceright(),
+						mGiaDungEntity.getPriceleft());
+			}
+
+		}
+	};
+
+	/**
+	 * Kiem tra ket qua
+	 * @param a
+	 * @param b
+	 */
+	private void check(int a, int b) {
+		int result = a - b;
+
+		if (result > 0) {
+			right();
+		} else {
+			worng();
+		}
+	}
+
+	/**
+	 * Tra loi dung
+	 */
+	private void right() {
+		Toast.makeText(
+				mContext,
+				":Right: " + mGiaDungEntity.getPriceleft() + "$ - "
+						+ mGiaDungEntity.getPriceright() + "$",
+				Toast.LENGTH_LONG).show();
+	}
+
+	/**
+	 * Tra loi sai
+	 */
+	private void worng() {
+		Toast.makeText(
+				mContext,
+				":Worng: " + mGiaDungEntity.getPriceleft() + "$ - "
+						+ mGiaDungEntity.getPriceright() + "$", 2000).show();
+	}
+
+	/**
+	 * Hoan thanh man choi
+	 */
+	private void pass() {
+		Toast.makeText(mContext, "Qua man choi cuoi...", Toast.LENGTH_LONG)
+				.show();
+		finish();
+	}
+
+	/**
+	 * Dem nguoc
+	 */
+	private void countDown() {
+		mSec = Define.MAX_SEC;
+		mTvSec.setText(mSec + " s");
+		mProgressBar.setProgress(mSec);
+		mHandler.removeCallbacks(mRunnable);
+		mHandler.postDelayed(mRunnable, Define.DELAY);
+	}
+
+	private Runnable mRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+
+			if (--mSec > -1) {
+				mTvSec.setText(mSec + " s");
+				mProgressBar.setProgress(mSec);
+				mHandler.postDelayed(mRunnable, Define.DELAY);
+			}else{
+				worng();
+			}
+		}
+	};
+
+	/**
+	 * Chuyen sang cau moi
+	 */
 	private void next() {
 
+		mTvCoin.setText(mRuby + " Coint");
+		mTvQuestionIdx.setText((mIndex + 1) + "");
+
+		//Kiem tra xem da het cau hoi hay chua
 		if (mIndex >= mSize) {
-			Toast.makeText(mContext, "Qua man choi cuoi...", Toast.LENGTH_LONG)
-					.show();
-			finish();
+			pass();
 			return;
 		}
 
+		// dem nguoc
+		countDown();
+
 		mGiaDungEntity = mGiaDungDAO.getGiaDungEntityByPosition(mIndex);
-		
+
 		Bitmap bmLeft = getBitmapFromAsset(mGiaDungEntity.getIconleft());
 		mImgLeft.setImageBitmap(bmLeft);
-		
+
 		Bitmap bmRight = getBitmapFromAsset(mGiaDungEntity.getIconright());
 		mImgRight.setImageBitmap(bmRight);
-		
+
 		mTvLeft.setText(mGiaDungEntity.getTextleft());
 		mTvRight.setText(mGiaDungEntity.getTextright());
 
@@ -114,6 +223,13 @@ public class MainActivity extends Activity {
 		}
 		Bitmap bitmap = BitmapFactory.decodeStream(istr);
 		return bitmap;
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		mHandler.removeCallbacks(mRunnable);
+		super.onDestroy();
 	}
 
 }
