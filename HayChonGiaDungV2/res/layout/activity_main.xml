@@ -4,101 +4,116 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tvQuestionIdx"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="@android:color/black"
-        android:gravity="center"
-        android:text="1"
-        android:textColor="@android:color/white" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:max="7"
-        android:progress="2" />
-
-    <TextView
-        android:id="@+id/tvSec"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="5 s" />
-
-    <TextView
-        android:id="@+id/tvCoin"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="50 coin" />
-
-    <TextView
-        android:id="@+id/tvQuestion"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/giacaohon" />
-
     <LinearLayout
+        android:id="@+id/board"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:baselineAligned="false"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvQuestionIdx"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:background="@android:color/black"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@android:color/white" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:max="7"
+            android:progress="2" />
+
+        <TextView
+            android:id="@+id/tvSec"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="5 s" />
+
+        <TextView
+            android:id="@+id/tvCoin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="50 coin" />
+
+        <TextView
+            android:id="@+id/tvQuestion"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/giacaohon" />
 
         <LinearLayout
-            android:id="@+id/llLeft"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:baselineAligned="false"
-            android:clickable="true"
-            android:orientation="vertical" >
+            android:orientation="horizontal" >
 
-            <ImageView
-                android:id="@+id/imgLeft"
-                android:layout_width="fill_parent"
-                android:layout_height="130dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_launcher" />
+            <LinearLayout
+                android:id="@+id/llLeft"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:baselineAligned="false"
+                android:clickable="true"
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/tvLeft"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Name Left" />
+                <ImageView
+                    android:id="@+id/imgLeft"
+                    android:layout_width="fill_parent"
+                    android:layout_height="130dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tvLeft"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Name Left" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llRight"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:baselineAligned="false"
+                android:clickable="true"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/imgRight"
+                    android:layout_width="fill_parent"
+                    android:layout_height="130dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tvRight"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Name Right" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/llRight"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:baselineAligned="false"
-            android:clickable="true"
-            android:orientation="vertical" >
-
-            <ImageView
-                android:id="@+id/imgRight"
-                android:layout_width="fill_parent"
-                android:layout_height="130dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_launcher" />
-
-            <TextView
-                android:id="@+id/tvRight"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Name Right" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btnSkip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Skip (5 Coint)" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnSkip"
+        android:id="@+id/btnShare"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Skip (5 Coint)" />
+        android:text="Share facebook for 5 coint" />
 
 </LinearLayout>

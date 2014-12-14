@@ -3,4 +3,7 @@
     <issue id="HandlerLeak">
         <ignore path="src/com/gtoteck/app/haychongiadung/MainActivity.java" />
     </issue>
+    <issue id="NewApi">
+        <ignore path="src/com/gtoteck/app/haychongiadung/MainActivity.java" />
+    </issue>
 </lint>
