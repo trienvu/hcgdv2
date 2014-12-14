@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,19 +30,21 @@ public class MainActivity extends Activity {
 	private TextView mTvCoin;
 	private LinearLayout mLlLeft;
 	private LinearLayout mLlRight;
+	private LinearLayout mLlBoard;
 	private ImageView mImgLeft;
 	private ImageView mImgRight;
 	private TextView mTvLeft;
 	private TextView mTvRight;
 	private TextView mTvQuestionIdx;
 	private Button mBtnSkip;
+	private Button mBtnShare;
 
 	private GiaDungDAO mGiaDungDAO;
 	private Context mContext = this;
 
 	private int mIndex = 0;
 	private int mSize = 0;
-	private int mRuby = 70;
+	private int mRuby = Define.COINT_DEFAULT;
 
 	private int mSec = Define.MAX_SEC;
 
@@ -70,6 +73,9 @@ public class MainActivity extends Activity {
 		mTvQuestionIdx = (TextView) findViewById(R.id.tvQuestionIdx);
 		mBtnSkip = (Button) findViewById(R.id.btnSkip);
 		mBtnSkip.setOnClickListener(mBtnSkipOnClickListener);
+		mBtnShare = (Button) findViewById(R.id.btnShare);
+		mBtnShare.setOnClickListener(mBtnShareOnClickListener);
+		mLlBoard = (LinearLayout) findViewById(R.id.board);
 
 		mGiaDungDAO = new GiaDungDAO(mContext);
 		mSize = mGiaDungDAO.getSize();
@@ -85,7 +91,24 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
+			worng();
 			next();
+		}
+	};
+
+	private OnClickListener mBtnShareOnClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			// code share viết sau
+
+			// tạm thời cộng 5 coint
+			mRuby += Define.COINT_ADD;
+
+			if (mLlBoard.getAlpha() == Define.ALPHA_BLUR) {
+				next();
+			}
 		}
 	};
 
@@ -109,6 +132,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Kiem tra ket qua
+	 * 
 	 * @param a
 	 * @param b
 	 */
@@ -120,6 +144,8 @@ public class MainActivity extends Activity {
 		} else {
 			worng();
 		}
+
+		next();
 	}
 
 	/**
@@ -131,6 +157,7 @@ public class MainActivity extends Activity {
 				":Right: " + mGiaDungEntity.getPriceleft() + "$ - "
 						+ mGiaDungEntity.getPriceright() + "$",
 				Toast.LENGTH_LONG).show();
+		mRuby += Define.COINT_ADD;
 	}
 
 	/**
@@ -140,7 +167,9 @@ public class MainActivity extends Activity {
 		Toast.makeText(
 				mContext,
 				":Worng: " + mGiaDungEntity.getPriceleft() + "$ - "
-						+ mGiaDungEntity.getPriceright() + "$", 2000).show();
+						+ mGiaDungEntity.getPriceright() + "$",
+				Toast.LENGTH_SHORT).show();
+		mRuby -= Define.COINT_MINUS;
 	}
 
 	/**
@@ -153,13 +182,21 @@ public class MainActivity extends Activity {
 	}
 
 	/**
+	 * Hết coint
+	 */
+	private void endCoint() {
+		Toast.makeText(
+				mContext,
+				"Bạn đã hết xu vui lòng bấm nút share facebook để share và nhận thêm 5 coint",
+				Toast.LENGTH_LONG).show();
+		mLlBoard.setAlpha(Define.ALPHA_BLUR);
+		 enableDisableView(mLlBoard, false);
+	}
+
+	/**
 	 * Dem nguoc
 	 */
 	private void countDown() {
-		mSec = Define.MAX_SEC;
-		mTvSec.setText(mSec + " s");
-		mProgressBar.setProgress(mSec);
-		mHandler.removeCallbacks(mRunnable);
 		mHandler.postDelayed(mRunnable, Define.DELAY);
 	}
 
@@ -173,8 +210,9 @@ public class MainActivity extends Activity {
 				mTvSec.setText(mSec + " s");
 				mProgressBar.setProgress(mSec);
 				mHandler.postDelayed(mRunnable, Define.DELAY);
-			}else{
+			} else {
 				worng();
+				next();
 			}
 		}
 	};
@@ -184,17 +222,26 @@ public class MainActivity extends Activity {
 	 */
 	private void next() {
 
+		mHandler.removeCallbacks(mRunnable);
+		
+		// open board
+		 enableDisableView(mLlBoard, true);
+		mLlBoard.setAlpha(Define.ALPHA_NORMAL);
+
+		// update time
+		mSec = Define.MAX_SEC;
+		mTvSec.setText(mSec + " s");
+		mProgressBar.setProgress(mSec);
+
+		mRuby = (mRuby < 0) ? 0 : mRuby;
 		mTvCoin.setText(mRuby + " Coint");
 		mTvQuestionIdx.setText((mIndex + 1) + "");
 
-		//Kiem tra xem da het cau hoi hay chua
+		// Kiem tra xem da het cau hoi hay chua
 		if (mIndex >= mSize) {
 			pass();
 			return;
 		}
-
-		// dem nguoc
-		countDown();
 
 		mGiaDungEntity = mGiaDungDAO.getGiaDungEntityByPosition(mIndex);
 
@@ -207,9 +254,27 @@ public class MainActivity extends Activity {
 		mTvLeft.setText(mGiaDungEntity.getTextleft());
 		mTvRight.setText(mGiaDungEntity.getTextright());
 
+		if (mRuby <= 0) {
+			endCoint();
+			return;
+		}
+		// dem nguoc
+		countDown();
+
 		// increment
 		mIndex++;
 	}
+	
+	public static void enableDisableView(View view, boolean enabled) {
+        view.setEnabled(enabled);
+        if ( view instanceof ViewGroup ) {
+            ViewGroup group = (ViewGroup)view;
+ 
+            for ( int idx = 0 ; idx < group.getChildCount() ; idx++ ) {
+                enableDisableView(group.getChildAt(idx), enabled);
+            } 
+        } 
+    } 
 
 	private Bitmap getBitmapFromAsset(String name) {
 		AssetManager assetManager = getAssets();
