@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">The price is right</string>
+    <string name="app_name">TruePrice</string>
     
-    <string name="giacaohon">Higher price ???</string>
+    <string name="giacaohon">Higher price?</string>
 
 </resources>
