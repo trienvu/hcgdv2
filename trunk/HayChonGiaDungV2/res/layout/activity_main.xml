@@ -26,8 +26,12 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:max="7"
-            android:progress="2" />
+            android:maxHeight="15dp"
+            android:minHeight="10dp"
+            android:progress="2"
+            android:progressDrawable="@drawable/custom_progressbar" />
 
         <TextView
             android:id="@+id/tvSec"
@@ -45,7 +49,9 @@
             android:id="@+id/tvQuestion"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/giacaohon" />
+            android:gravity="center_horizontal"
+            android:text="@string/giacaohon"
+            android:textSize="30dp" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -110,10 +116,16 @@
             android:text="Skip (5 Coint)" />
     </LinearLayout>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
     <Button
         android:id="@+id/btnShare"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:text="Share facebook for 5 coint" />
 
 </LinearLayout>
